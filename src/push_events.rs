@@ -16,15 +16,11 @@ pub trait PushEvents {
 fn new_push_events(config: PushEventsConfig) -> Box<dyn PushEvents> {
     let motion_event_repo = match config.motion_event_repo_config {
         None => Box::new(NoOpMotionEvents),
-        Some(MotionEventsConfig::Sqlite { database }) => {
-            sqlite::new_motion_events_via_sqlite(database)
-        }
+        Some(MotionEventsConfig::Sqlite { database }) => sqlite::new_motion_events_via_sqlite(database),
     };
     let push_event_sink = match config.push_event_sink_config {
         None => Box::new(NoOpPushEventSink),
-        Some(PushEventSinkConfig::Email { recipients }) => {
-            email::new_push_events_email_sink(recipients)
-        }
+        Some(PushEventSinkConfig::Email { recipients }) => email::new_push_events_email_sink(recipients),
     };
     Box::new(PushEventsWorkflow {
         motion_event_repo,
@@ -77,10 +73,7 @@ pub enum SendPushEventsError {}
 
 #[async_trait]
 trait MotionEvents {
-    async fn load_latest_events(
-        &self,
-        timestamp_order: Order,
-    ) -> Result<Vec<MotionEvent>, MotionEventError>;
+    async fn load_latest_events(&self, timestamp_order: Order) -> Result<Vec<MotionEvent>, MotionEventError>;
     async fn mark_events_sent(&self, events: Vec<MotionEvent>) -> Result<(), MotionEventError>;
 }
 
@@ -89,10 +82,7 @@ struct NoOpMotionEvents;
 
 #[async_trait]
 impl MotionEvents for NoOpMotionEvents {
-    async fn load_latest_events(
-        &self,
-        timestamp_order: Order,
-    ) -> Result<Vec<MotionEvent>, MotionEventError> {
+    async fn load_latest_events(&self, timestamp_order: Order) -> Result<Vec<MotionEvent>, MotionEventError> {
         Ok(Vec::new())
     }
     async fn mark_events_sent(&self, events: Vec<MotionEvent>) -> Result<(), MotionEventError> {
