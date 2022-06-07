@@ -1,0 +1,12 @@
+Goals:
+
+- Impl graceful shutdown: https://tokio.rs/tokio/topics/shutdown
+- Log to syslog: https://tokio.rs/tokio/topics/tracing, https://docs.rs/tracing-journald/latest/tracing_journald/
+- Spawn background task that polls for PushEvents every X duration, takes a graceful shutdown channel
+- Can run standalone or as a systemd service
+- Spawn hyper server as background task, `Server::with_graceful_shutdown`
+
+More half baked goals
+- Captures gallery, indexed by day + camera
+  - Someday, setup an infinite stream with motion capture timestamps?
+- Camera healthcheck page, bitrate, cpu load, cpu core, disk utilization
